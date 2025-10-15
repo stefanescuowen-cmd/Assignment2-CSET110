@@ -18,6 +18,7 @@ function ready(){
     let quantityInputs = document.getElementsByClassName('cart-quantity-input');
     for (let input of quantityInputs){
         input.addEventListener('change', quantityChanged)
+        input.setAttribute('min', '1');
     }
 
     // Attach add-to-cart events
@@ -30,6 +31,8 @@ function ready(){
     document
         .getElementsByClassName('btn-purchase')[0]
         .addEventListener('click', purchaseClicked)
+
+    updateCartTotal();
 }
 
 
@@ -56,7 +59,7 @@ function addItemToCart(title, price, imageSrc){
     // Check for duplicate
     for (let i = 0; i < cartItemNames.length; i++){
         if (cartItemNames[i].innerText === title){
-            alert('This item is already added to the cart');
+            alert('This item has already been added to the cart.');
             return;
         }
     }
@@ -78,7 +81,9 @@ function addItemToCart(title, price, imageSrc){
 
     // Attach listeners to the new row's remove button and quantity input
     cartRow.querySelector('.btn-danger').addEventListener('click', removeCartItem);
-    cartRow.querySelector('.cart-quantity-input').addEventListener('change', quantityChanged);
+    const newInput = cartRow.querySelector('.cart-quantity-input');
+    newInput.addEventListener('change', quantityChanged);
+    newInput.setAttribute('min', '1')
 }
 
 
@@ -94,7 +99,7 @@ function removeCartItem(event){
 function quantityChanged(event){
     const input = event.target;
     // Guard against invalid values
-    if(isNaN(input.value) || input.value <= 0){
+    if(isNaN(input.value) || input.value <= 0 || !Number.isInteger(parseFloat(input.value))){
         input.value = 1;
     }
     updateCartTotal();
@@ -102,8 +107,10 @@ function quantityChanged(event){
 
 
 // Recalculate total
-function updateCartTotal(event){
+function updateCartTotal(){
     const cartItemContainer = document.getElementsByClassName('cart-items')[0];
+    const cartTotalElement = document.getElementsByClassName('cart-total-price')[0];
+    if (!cartItemContainer || !cartTotalElement) return;
     const cartRows = cartItemContainer.getElementsByClassName('cart-row');
     let total = 0;
     for(let i = 0; i < cartRows.length; i++){
@@ -116,7 +123,7 @@ function updateCartTotal(event){
     }
     // Round to two decimals
     total = Math.round(total * 100) / 100;
-    document.getElementsByClassName('cart-total-price')[0].innerText = '$' + total.toFixed(2);
+    cartTotalElement.innerText = '$' + total.toFixed(2);
 }
 
 
