@@ -126,15 +126,31 @@ function updateCartTotal(){
     cartTotalElement.innerText = '$' + total.toFixed(2);
 }
 
+const cartItems = document.getElementsByClassName('cart-items')[0];
 
 // When purchase button is clicked
 function purchaseClicked(){
-    alert('Thank you for your purchase!')
-    const cartItems = document.getElementsByClassName('cart-items')[0];
+    
+    // In the case that nothing is inside the cart, show a different alert for it
+    if (!cartItems.hasChildNodes()){
+        alert('Your cart is empty!');
+        return;
+    }
 
-    // Remove all child nodes
+    // If item(s) are in the cart, proceed with the purchase
+    alert('Thank you for your purchase!');
+    
+    resetCart();
+}
+
+
+// Reset Cart
+function resetCart(){
+     // Remove all child nodes
     while (cartItems.hasChildNodes()){
         cartItems.removeChild(cartItems.firstChild);
     }
     updateCartTotal();
 }
+
+resetCart()
